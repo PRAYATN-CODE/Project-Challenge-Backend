@@ -28,23 +28,10 @@ const connectToMongo = async () => {
     try {
         // Connect to MongoDB
         await mongoose.connect(mongoURL, {
-            serverSelectionTimeoutMS: 60000, // Increased timeout for connection
+            serverSelectionTimeoutMS: 60000,
+            autoIndex: false
         });
         console.log("Connected to MongoDB successfully");
-
-        // Check and drop the unique index on description if it exists
-        const db = mongoose.connection;
-        const indexes = await db.collection('notes').indexes();
-
-        // Find the index name for 'description'
-        const descriptionIndex = indexes.find(index => index.key.description);
-
-        if (descriptionIndex) {
-            await db.collection('notes').dropIndex(descriptionIndex.name);
-            console.log("Index 'description_1' dropped successfully");
-        } else {
-            console.log("Index 'description_1' does not exist");
-        }
 
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
