@@ -33,11 +33,12 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Enable CORS (temporarily allowing all origins for debugging)
+// Enable CORS for localhost:3000 and handle preflight requests
 app.use(cors({
-    origin: '*',  // Change this back to specific origins for security in production
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: 'http://localhost:3000',  // Frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,  // Allow cookies if needed
 }));
 
 // Middleware to parse JSON request bodies
@@ -46,6 +47,14 @@ app.use(express.json());
 // Define routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
+
+// Handle preflight (OPTIONS) requests for all routes
+app.options('*', cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+}));
 
 // Start server with error handling
 app.listen(port, (error) => {
