@@ -33,8 +33,12 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Enable CORS for requests from localhost:3000
-app.use(cors({ origin: 'http://localhost:3000' }));
+// Enable CORS (temporarily allowing all origins for debugging)
+app.use(cors({
+    origin: '*',  // Change this back to specific origins for security in production
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
@@ -49,7 +53,7 @@ app.listen(port, (error) => {
         console.error("Error starting server:", error);
         process.exit(1); // Exit with status code 1 if there's an error
     } else {
-        console.log(`Server listening on http://localhost:${port}`);
+        console.log(`Server listening on port: ${port}`);
     }
 });
 
