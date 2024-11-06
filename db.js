@@ -4,10 +4,7 @@ const mongoURl = "mongodb+srv://PrayatnSoni:7SSwBwCGv6ltTkAo@prayatn.ulop1.mongo
 const connectToMongo = async () => {
     try {
         // Connect to MongoDB
-        await mongoose.connect(mongoURl, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(mongoURl);
         console.log("Connected to MongoDB successfully");
 
         // Drop the unique index on description
