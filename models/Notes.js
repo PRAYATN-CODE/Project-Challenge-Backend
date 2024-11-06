@@ -5,6 +5,7 @@ const NotesSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        index: true, // Explicitly index the user field
     },
     title: {
         type: String,

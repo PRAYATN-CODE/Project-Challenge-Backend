@@ -33,13 +33,15 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Enable CORS for localhost:3000 and handle preflight requests
-app.use(cors({
-    origin: 'http://localhost:3000',  // Frontend origin
+// Enable CORS for localhost:3000 (development) and your Render URL (production)
+const corsOptions = {
+    origin: ['http://localhost:3000', 'https://notes-app-backend-zq23.onrender.com'],  // Add both development and production URLs
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,  // Allow cookies if needed
-}));
+};
+
+app.use(cors(corsOptions));  // Use CORS middleware globally
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
@@ -47,14 +49,6 @@ app.use(express.json());
 // Define routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
-
-// Handle preflight (OPTIONS) requests for all routes
-app.options('*', cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-}));
 
 // Start server with error handling
 app.listen(port, (error) => {
