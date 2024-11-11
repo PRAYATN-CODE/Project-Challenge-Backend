@@ -15,11 +15,12 @@ const UserSchema = new Schema({
 
     password: {
         type: String,
-        required: true, 
+        required: true,
     },
 
     date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
 
 })
