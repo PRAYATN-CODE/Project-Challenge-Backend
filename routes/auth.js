@@ -23,7 +23,7 @@ router.post('/createuser', [
     try {
         let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.status(400).json({success, error: "Sorry, a user with this email already exists." });
+            return res.status(400).json({ success, error: "Sorry, a user with this email already exists." });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -35,14 +35,13 @@ router.post('/createuser', [
             password: secPass,
         });
 
-        const data = {
-            user: {
-                id: user.id
-            }
+        if (!user) {
+            return res.status(400).json({ success: false, error: "Please try to login with correct credentials!" });
         }
-        const authtoken = jwt.sign(data, JWT_SECRET);
+
+        const authtoken = jwt.sign({ id: user._id }, JWT_SECRET);
         success = true
-        res.json({success, token: authtoken });  // Respond with the created user
+        res.json({ success, token: authtoken });  // Respond with the created user
     } catch (err) {
         console.log(err);
         res.status(500).send("Internal Server Error");
@@ -57,7 +56,7 @@ router.post('/loginuser', [
     let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({success , errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -73,13 +72,7 @@ router.post('/loginuser', [
             return res.status(400).json({ error: "Please try to login with correct Credential!" });
         }
 
-        const data = {
-            user: {
-                id: user.id
-            }
-        }
-
-        const authtoken = jwt.sign(data, JWT_SECRET);
+        const authtoken = jwt.sign({ id: user._id }, JWT_SECRET);
         success = true
         res.send({ success, Authtoken: authtoken });
     } catch (error) {
@@ -90,7 +83,7 @@ router.post('/loginuser', [
 
 router.post('/getuser', fetchuser, async (req, res) => {
     try {
-        userId = req.user.id;
+        const userId = req.user.id;
         const user = await User.findById(userId).select("-password")
         res.send(user)
     } catch (error) {
